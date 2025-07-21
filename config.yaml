@@ -1,0 +1,17 @@
+server:
+  host: "0.0.0.0"
+  port: 8000
+  debug: true
+
+model:
+  name: "iic/SenseVoiceSmall"
+  device: "cuda:0"
+  trust_remote_code: true
+
+audio:
+  max_file_size_mb: 100
+  supported_formats: ["wav", "mp3", "m4a", "flac"]
+  temp_dir: "./temp"
+
+processing:
+  timeout_seconds: 300
