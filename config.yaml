@@ -9,27 +9,16 @@ model:
   trust_remote_code: true
 
 audio:
-  max_file_size_mb: 200
-  max_duration_minutes: 120
+  max_file_size_mb: 500
   supported_formats: ["wav", "mp3", "m4a", "flac", "aac"]
   temp_dir: "./temp"
-
-# 嵌套配置保持原有结构
-audio_preprocessing:
+  
+  # 简化的切片配置
+  segment_length: 10.0    # 10秒切片
+  overlap_length: 2.0     # 2秒重叠
   target_sample_rate: 16000
-  target_channels: 2
-  target_format: "wav"
-  enable_noise_reduction: true
-  enable_normalization: true
-  silence_threshold_db: -40
-
-audio_segmentation:
-  segment_length_seconds: 10.0
-  overlap_seconds: 2.0
-  min_segment_length: 3.0
-  max_silence_length: 1.0
-  fade_duration: 0.1
+  target_channels: 1      # 单声道即可
 
 processing:
-  timeout_seconds: 600
-  max_concurrent_tasks: 10
+  timeout_seconds: 1800
+  chunk_size_mb: 1        # 流式处理块大小
