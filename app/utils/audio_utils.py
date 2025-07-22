@@ -30,7 +30,7 @@ class AudioProcessor:
             logger.error(f"音频文件验证失败 {file_path}: {e}")
             return False
     
-    def get_audio_info(self, file_path: str) -> Optional[Dict[str, Any]]:
+    def get_audio_info(self, file_path: str) -> Optional[dict[str, any]]:
         """获取音频文件信息"""
         try:
             info = sf.info(file_path)

@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     
     # 服务器配置
     server_host: str = "0.0.0.0"
-    server_port: int = 8000
+    server_port: int = 9999
     server_debug: bool = True
     
     # 模型配置
