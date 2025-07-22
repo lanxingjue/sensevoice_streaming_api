@@ -1,9 +1,9 @@
-"""完整配置管理模块 - 修正版"""
+"""完整配置管理模块 - Pydantic v2修正版"""
 import yaml
 from typing import List, Optional, Any, Dict
 from pathlib import Path
-from pydantic import BaseModel, Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel, Field, ConfigDict
+from pydantic_settings import BaseSettings
 
 
 class AudioPreprocessingSettings(BaseModel):
@@ -27,7 +27,7 @@ class AudioSegmentationSettings(BaseModel):
 
 class StreamingSettings(BaseModel):
     """流式处理配置"""
-    batch_size: int = 128                    # 重要：修复字段名
+    batch_size: int = 128
     batch_timeout_ms: int = 200
     first_segment_priority: int = 10
     normal_segment_priority: int = 1
@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     
     # 服务器配置
     server_host: str = "0.0.0.0"
-    server_port: int = 8000
+    server_port: int = 9999
     server_debug: bool = True
 
     # 模型配置
@@ -88,11 +88,33 @@ class Settings(BaseSettings):
     )
 
     # Pydantic v2 配置
-    model_config = SettingsConfigDict(
+    model_config = ConfigDict(
         env_nested_delimiter="__",
         case_sensitive=False,
-        env_file_encoding='utf-8'
+        env_file_encoding='utf-8',
+        extra='allow'  # 允许额外字段，避免动态设置问题
     )
+    
+    # 便捷属性访问方法（替代动态字段设置）
+    @property
+    def streaming_batch_size(self) -> int:
+        """向后兼容的批处理大小访问"""
+        return self.streaming.batch_size
+    
+    @property 
+    def streaming_batch_timeout_ms(self) -> int:
+        """向后兼容的批处理超时访问"""
+        return self.streaming.batch_timeout_ms
+    
+    @property
+    def streaming_max_queue_size(self) -> int:
+        """向后兼容的最大队列大小访问"""
+        return self.streaming.max_queue_size
+    
+    @property
+    def streaming_max_concurrent_batches(self) -> int:
+        """向后兼容的最大并发批次访问"""
+        return self.streaming.max_concurrent_batches
 
 
 def load_config_from_yaml(config_path: str = "config.yaml") -> Settings:
@@ -138,10 +160,3 @@ def load_config_from_yaml(config_path: str = "config.yaml") -> Settings:
 
 # 创建全局配置实例
 settings = load_config_from_yaml()
-
-# 提供向后兼容的属性访问
-# 修复dual_queue_scheduler.py中的字段访问问题
-settings.streaming_batch_size = settings.streaming.batch_size
-settings.streaming_batch_timeout_ms = settings.streaming.batch_timeout_ms
-settings.streaming_max_queue_size = settings.streaming.max_queue_size
-settings.streaming_max_concurrent_batches = settings.streaming.max_concurrent_batches

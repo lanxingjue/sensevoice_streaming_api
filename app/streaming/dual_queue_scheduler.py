@@ -31,16 +31,16 @@ class DualQueueScheduler:
     
     def __init__(self):
         # 双队列
-        self.first_segment_queue = deque()     # 首片段优先队列
-        self.normal_segment_queue = deque()    # 普通片段队列
+        self.first_segment_queue = deque()
+        self.normal_segment_queue = deque()
         
-        # 配置参数
-        self.batch_size = settings.streaming.batch_size 
-        self.batch_timeout = settings.streaming_batch_timeout_ms / 1000.0  # 转换为秒
-        self.max_queue_size = settings.streaming_max_queue_size
-        
+        # 修正后的配置参数访问方式
+        self.batch_size = settings.streaming.batch_size  # 直接访问嵌套属性
+        self.batch_timeout = settings.streaming.batch_timeout_ms / 1000.0
+        self.max_queue_size = settings.streaming.max_queue_size
         self.max_concurrent_batches = settings.streaming.max_concurrent_batches
         self.queue_check_interval = settings.streaming.queue_check_interval_ms / 1000.0
+        
         # 状态管理
         self.is_running = False
         self.batch_counter = 0
@@ -233,7 +233,6 @@ class DualQueueScheduler:
         """获取队列统计"""
         avg_batch_size = 0.0
         if self.total_batches_created > 0:
-            # 这里可以维护一个批次大小历史记录
             avg_batch_size = self.batch_size  # 简化实现
         
         avg_wait_time = 0.0

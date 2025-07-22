@@ -21,7 +21,7 @@ class BatchProcessor:
         self.dispatcher = result_dispatcher
         
         # 配置参数
-        self.max_concurrent_batches = settings.streaming_max_concurrent_batches
+        self.max_concurrent_batches = settings.streaming.max_concurrent_batches
         
         # 状态管理
         self.is_running = False

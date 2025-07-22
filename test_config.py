@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""配置加载测试脚本"""
+"""配置加载测试脚本 - 修正版"""
 
 from app.config.settings import settings
 
@@ -26,10 +26,10 @@ def test_config_loading():
     print(f"切片长度: {settings.audio_segmentation.segment_length_seconds}秒")
     print(f"重叠长度: {settings.audio_segmentation.overlap_seconds}秒")
     
-    # 测试向后兼容性
+    # 测试向后兼容性属性访问
     print(f"\n=== 向后兼容性测试 ===")
-    print(f"streaming_batch_size: {settings.streaming_batch_size}")
-    print(f"streaming_batch_timeout_ms: {settings.streaming_batch_timeout_ms}")
+    print(f"streaming_batch_size (属性访问): {settings.streaming_batch_size}")
+    print(f"streaming_batch_timeout_ms (属性访问): {settings.streaming_batch_timeout_ms}")
     
     print("\n✅ 配置加载测试完成")
 
