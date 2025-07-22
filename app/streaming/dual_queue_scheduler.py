@@ -35,10 +35,12 @@ class DualQueueScheduler:
         self.normal_segment_queue = deque()    # 普通片段队列
         
         # 配置参数
-        self.batch_size = settings.streaming_batch_size
+        self.batch_size = settings.streaming.batch_size 
         self.batch_timeout = settings.streaming_batch_timeout_ms / 1000.0  # 转换为秒
         self.max_queue_size = settings.streaming_max_queue_size
         
+        self.max_concurrent_batches = settings.streaming.max_concurrent_batches
+        self.queue_check_interval = settings.streaming.queue_check_interval_ms / 1000.0
         # 状态管理
         self.is_running = False
         self.batch_counter = 0

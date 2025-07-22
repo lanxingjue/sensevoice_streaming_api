@@ -10,36 +10,46 @@ model:
 
 audio:
   max_file_size_mb: 500
+  max_duration_minutes: 120
   supported_formats: ["wav", "mp3", "m4a", "flac", "aac"]
   temp_dir: "./temp"
-  
-  # 简化的切片配置
-  segment_length: 10.0    # 10秒切片
-  overlap_length: 2.0     # 2秒重叠
+  segment_length: 10.0
+  overlap_length: 2.0
   target_sample_rate: 16000
-  target_channels: 1      # 单声道即可
+  target_channels: 1
+
+# 独立的嵌套配置块
+audio_preprocessing:
+  target_sample_rate: 16000
+  target_channels: 1
+  target_format: "wav"
+  enable_noise_reduction: true
+  enable_normalization: true
+  silence_threshold_db: -40.0
+
+audio_segmentation:
+  segment_length_seconds: 10.0
+  overlap_seconds: 2.0
+  min_segment_length: 3.0
+  max_silence_length: 1.0
+  fade_duration: 0.1
+
+streaming:
+  batch_size: 128                    # 重要：修复字段名
+  batch_timeout_ms: 200
+  first_segment_priority: 10
+  normal_segment_priority: 1
+  max_queue_size: 1000
+  queue_check_interval_ms: 50
+  max_concurrent_batches: 2
+  gpu_memory_threshold: 0.9
+  enable_performance_monitoring: true
 
 processing:
   timeout_seconds: 1800
-  chunk_size_mb: 1        # 流式处理块大小
+  max_concurrent_tasks: 10
+  chunk_size_mb: 1
 
-  streaming:
-  # 双队列配置
-  batch_size: 128                    # 批处理大小
-  batch_timeout_ms: 100              # 批处理超时(毫秒)
-  first_segment_priority: 10         # 首片段优先级
-  normal_segment_priority: 1         # 普通片段优先级
-  
-  # 队列管理
-  max_queue_size: 1000              # 最大队列长度
-  queue_check_interval_ms: 50       # 队列检查间隔
-  
-  # 性能调优
-  max_concurrent_batches: 2         # 最大并发批次
-  gpu_memory_threshold: 0.9         # GPU内存阈值
-  enable_performance_monitoring: true
-
-# 监控配置  
 monitoring:
   enable_metrics: true
   metrics_interval_seconds: 30
