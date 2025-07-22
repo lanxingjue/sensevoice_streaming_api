@@ -1,5 +1,5 @@
 """简化的切片任务模型"""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 from enum import Enum
 import time
