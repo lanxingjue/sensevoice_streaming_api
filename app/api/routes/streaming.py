@@ -1,5 +1,5 @@
 """流式处理API接口 - 修复版"""
-import time
+
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
 from fastapi.responses import JSONResponse
 from typing import List, Optional
@@ -8,6 +8,7 @@ from ...streaming.batch_processor import batch_processor
 from ...streaming.result_dispatcher import result_dispatcher
 from ...preprocessing.task_manager import task_manager  # 确保正确导入
 from ...models.segment_task import SegmentStatus
+import time
 from ...models.audio_task import TaskStatus  # 添加缺失的导入
 from ..schemas.streaming_models import (
     StreamingStatus,
