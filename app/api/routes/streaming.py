@@ -1,12 +1,14 @@
-"""流式处理API接口"""
+"""流式处理API接口 - 修复版"""
+import time
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
 from fastapi.responses import JSONResponse
 from typing import List, Optional
 
 from ...streaming.batch_processor import batch_processor
 from ...streaming.result_dispatcher import result_dispatcher
-from ...preprocessing.task_manager import task_manager
+from ...preprocessing.task_manager import task_manager  # 确保正确导入
 from ...models.segment_task import SegmentStatus
+from ...models.audio_task import TaskStatus  # 添加缺失的导入
 from ..schemas.streaming_models import (
     StreamingStatus,
     BatchProcessingStats,
@@ -76,21 +78,21 @@ async def get_processing_stats():
 
 @router.post("/submit/{audio_task_id}")
 async def submit_audio_for_streaming(audio_task_id: str):
-    """提交音频任务到流式处理队列"""
+    """提交音频任务到流式处理队列 - 修复版"""
     
     # 获取音频任务
     audio_task = task_manager.get_audio_task(audio_task_id)
     if not audio_task:
         raise HTTPException(status_code=404, detail="音频任务不存在")
     
-    # 检查任务状态
-    if audio_task.status.value != "ready":
+    # 检查任务状态 - 修复状态检查逻辑
+    if audio_task.status != TaskStatus.READY:
         raise HTTPException(
             status_code=400, 
             detail=f"音频任务状态不正确: {audio_task.status.value}，需要为 ready"
         )
     
-    # 获取所有切片任务
+    # 🔧 修复：调用正确的方法名
     segments = task_manager.get_segments_by_audio(audio_task_id)
     if not segments:
         raise HTTPException(status_code=400, detail="没有找到切片任务")

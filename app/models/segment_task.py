@@ -1,4 +1,4 @@
-"""简化的切片任务模型"""
+"""简化的切片任务数据模型 - 修复版"""
 from dataclasses import dataclass, field
 from typing import Optional
 from enum import Enum
@@ -9,6 +9,7 @@ class SegmentStatus(Enum):
     """切片状态"""
     CREATED = "created"
     READY = "ready"
+    QUEUED = "queued"       # 添加缺失状态
     PROCESSING = "processing"
     COMPLETED = "completed"
     FAILED = "failed"
@@ -31,6 +32,8 @@ class SegmentTask:
     status: SegmentStatus = SegmentStatus.CREATED
     priority: int = 1  # 首片段优先级为10
     created_at: float = field(default_factory=time.time)
+    queued_at: Optional[float] = None      # 添加队列时间字段
+    batch_id: Optional[str] = None         # 添加批次ID字段
     
     # 结果
     text: Optional[str] = None
@@ -48,4 +51,3 @@ class SegmentTask:
         self.confidence = confidence
         self.processing_time = proc_time
         self.status = SegmentStatus.COMPLETED
-    

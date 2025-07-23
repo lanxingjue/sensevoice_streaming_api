@@ -1,4 +1,4 @@
-"""简化的任务管理器"""
+"""简化的任务管理器 - 修复版"""
 from typing import Dict, List, Optional
 from pathlib import Path
 import logging
@@ -89,6 +89,27 @@ class TaskManager:
         """获取音频任务"""
         return self.audio_tasks.get(task_id)
     
+    def get_segment_task(self, segment_id: str) -> Optional[SegmentTask]:
+        """获取切片任务"""
+        return self.segment_tasks.get(segment_id)
+    
+    # 🔧 修复：添加缺失的方法
+    def get_segments_by_audio(self, audio_task_id: str) -> List[SegmentTask]:
+        """获取指定音频的所有切片任务"""
+        if audio_task_id not in self.audio_tasks:
+            return []
+        
+        audio_task = self.audio_tasks[audio_task_id]
+        segments = []
+        
+        for segment_id in audio_task.segments:
+            if segment_id in self.segment_tasks:
+                segments.append(self.segment_tasks[segment_id])
+        
+        # 按切片序号排序
+        segments.sort(key=lambda x: x.index)
+        return segments
+    
     def get_ready_segments(self, limit: int = 128) -> List[SegmentTask]:
         """获取准备处理的切片"""
         ready_segments = [
@@ -130,6 +151,7 @@ class TaskManager:
             
             audio_task.update_status(TaskStatus.COMPLETED)
             # 可以在这里保存完整结果
+            logger.info(f"音频任务完成: {audio_id}")
             
     def get_statistics(self) -> Dict:
         """获取统计信息"""
